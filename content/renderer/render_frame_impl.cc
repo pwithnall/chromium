@@ -124,6 +124,10 @@
 #include "content/renderer/media/android/webmediaplayer_android.h"
 #endif
 
+#if defined(ENABLE_GSTREAMER)
+#include "content/renderer/media/gstreamer/webmediaplayer_gst.h"
+#endif
+
 using blink::WebContextMenuData;
 using blink::WebData;
 using blink::WebDataSource;
@@ -1351,6 +1355,15 @@ blink::WebMediaPlayer* RenderFrameImpl::createMediaPlayer(
 
 #if defined(OS_ANDROID)
   return CreateAndroidWebMediaPlayer(url, client);
+#elif defined(ENABLE_GSTREAMER)
+  WebMediaPlayerParams params(
+      base::Bind(&ContentRendererClient::DeferMediaLoad,
+                 base::Unretained(GetContentClient()->renderer()),
+                 static_cast<RenderFrame*>(this)),
+      RenderThreadImpl::current()->GetAudioRendererMixerManager()->CreateInput(
+          render_view_->routing_id_, routing_id_));
+  return new WebMediaPlayerGst(frame, client, weak_factory_.GetWeakPtr(),
+                               params);
 #else
   WebMediaPlayerParams params(
       base::Bind(&ContentRendererClient::DeferMediaLoad,
@@ -3414,7 +3427,7 @@ bool RenderFrameImpl::InitializeMediaStreamClient() {
 WebMediaPlayer* RenderFrameImpl::CreateWebMediaPlayerForMediaStream(
     const blink::WebURL& url,
     WebMediaPlayerClient* client) {
-#if defined(ENABLE_WEBRTC)
+#if defined(ENABLE_WEBRTC) && !defined(ENABLE_GSTREAMER)
   if (!InitializeMediaStreamClient()) {
     LOG(ERROR) << "Failed to initialize MediaStreamClient";
     return NULL;
@@ -3428,7 +3441,7 @@ WebMediaPlayer* RenderFrameImpl::CreateWebMediaPlayerForMediaStream(
     return new WebMediaPlayerMS(frame_, client, weak_factory_.GetWeakPtr(),
                                 media_stream_client_, new RenderMediaLog());
   }
-#endif  // defined(ENABLE_WEBRTC)
+#endif  // defined(ENABLE_WEBRTC) && !defined(ENABLE_GSTREAMER)
   return NULL;
 }
 

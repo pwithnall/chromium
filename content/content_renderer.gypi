@@ -605,6 +605,18 @@
         'renderer/java/java_bridge_dispatcher.h',
       ],
     }],
+    ['enable_gstreamer==1', {
+      'sources!': [
+        'renderer/media/Webmediaplayer_impl.cc',
+        'renderer/media/Webmediaplayer_impl.h',
+        # TODO: Eliminate loads of other sources
+      ],
+      'sources': [
+        'renderer/media/gstreamer/webmediaplayer_gst.cc',
+        'renderer/media/gstreamer/webmediaplayer_gst.h',
+      ],
+      # TODO: Add GStreamer library dependency as per enable_webrtc below
+    }],
     # TODO(jrg): remove the OS=="android" section?
     # http://crbug.com/113172
     # Understand better how media_stream_ is tied into Chromium.

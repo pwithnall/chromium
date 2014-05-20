@@ -462,6 +462,9 @@
       # Webrtc compilation is enabled by default. Set to 0 to disable.
       'enable_webrtc%': 1,
 
+      # GStreamer is enabled by default, replacing ffmpeg. Set to 0 to disable.
+      'enable_gstreamer%': 1,
+
       # Enables use of the session service, which is enabled by default.
       # Support for disabling depends on the platform.
       'enable_session_service%': 1,
@@ -1012,6 +1015,7 @@
     'remoting%': '<(remoting)',
     'enable_one_click_signin%': '<(enable_one_click_signin)',
     'enable_webrtc%': '<(enable_webrtc)',
+    'enable_gstreamer%': '<(enable_gstreamer)',
     'chromium_win_pch%': '<(chromium_win_pch)',
     'configuration_policy%': '<(configuration_policy)',
     'safe_browsing%': '<(safe_browsing)',
@@ -1947,6 +1951,9 @@
       ['enable_webrtc==1', {
         'grit_defines': ['-D', 'enable_webrtc'],
       }],
+      ['enable_gstreamer==1', {
+        'grit_defines': ['-D', 'enable_gstreamer'],
+      }],
       ['enable_hangout_services_extension==1', {
         'grit_defines': ['-D', 'enable_hangout_services_extension'],
       }],
@@ -2398,6 +2405,9 @@
       }],
       ['enable_webrtc==1', {
         'defines': ['ENABLE_WEBRTC=1'],
+      }],
+      ['enable_gstreamer==1', {
+        'defines': ['ENABLE_GSTREAMER=1'],
       }],
       ['proprietary_codecs==1', {
         'defines': ['USE_PROPRIETARY_CODECS'],
